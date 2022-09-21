@@ -17,30 +17,32 @@ const UserSchema = new Schema(
         email: {
             type: String,
             required: true,
-            // valid email address
             validate: [validateEmail, 'Please enter a valid email address'],
             match: [/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/, 'Please enter a valid email address']
         },
         thoughts: [
-
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Thought'
+            }
         ],
         friends: [
-
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'User'
+            }
         ]
     },
     {
         toJSON: {
             virtuals: true,
+            getters: true
         },
         id: false
     }
 );
 
 UserSchema.virtual('friendCount').get(function() {
-    // return this.friends.reduce(
-    //     (total, friend) => total + friend.length + 1,
-    // );
-
     return this.friends.length
 });
 
