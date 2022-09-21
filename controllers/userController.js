@@ -4,13 +4,25 @@ const userController = {
     // get all users
     getAllUsers(req, res) {
         User.find()
-            .then((users) => res.json(users))
+            .populate({
+                path: 'thoughts',
+                select: '-__v'
+            })
+            .then((users) => {
+                console.log(users)
+                
+                return res.json(users)}
+            )
             .catch((err) => res.status(500).json(err));
     },
 
     // get one user by id
     getOneUser({ params }, res) {
         User.findOne({ _id: params.id })
+            // .populate({
+            //     path: 'thoughts',
+            //     select: '-_v'
+            // })
             .select('-_v')
             .then((user) =>
                 !user
