@@ -66,7 +66,31 @@ const userController = {
             )
             .then(() => res.json({ message: 'User deleted!' }))
             .catch((err) => res.status(500).json(err));
-    }
+    },
+
+    // add a friend to user
+    addFriend({ params, body }, res) {
+        User.friends.create(body)
+            .then(({ _id }) => {
+                return User.findOneAndUpdate(
+                    { _id: params.userId },
+                    { $push: { friends: _id } },
+                    { new: true }
+                )
+            .populate({
+                path: 'friends',
+                select: '-__v'
+                });
+            })
+            .then(friend => {
+                if (!friend) {
+                    res.status(404).json({ message: 'No friend found with this id!' });
+                    return;
+                    }
+                    res.json(friend);
+            })
+            .catch(err => res.json(err));
+    },
 };
 
 module.exports = userController;
