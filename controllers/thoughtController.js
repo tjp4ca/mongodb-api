@@ -10,7 +10,7 @@ const thoughtController = {
 
     // get one thought by id
     getOneThought({ params }, res) {
-        Thought.findOne({ _id: params.id })
+        Thought.findOne({ _id: params.thoughtId })
             .select('-_v')
             .then((thought) =>
                 !thought
@@ -41,7 +41,11 @@ const thoughtController = {
                     { _id: params.userId },
                     { $push: { thoughts: _id } },
                     { new: true }
-                );
+                )
+            .populate({
+                path: 'thoughts',
+                select: '-__v'
+                });
             })
             .then(thought => {
                 if (!thought) {
